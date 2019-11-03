@@ -3,6 +3,7 @@ package net.inxas.rit.widget.mediator;
 import net.inxas.rit.widget.Window;
 import net.inxas.rit.widget.event.MouseClickEvent;
 import net.inxas.rit.widget.event.WindowEvent;
+import net.inxas.rit.widget.geometry.Area;
 import net.inxas.rit.widget.geometry.Rectangle;
 
 /**
@@ -88,7 +89,7 @@ public abstract class WindowMediator {
      * 
      * @return このウィンドウのクライアント領域の大きさ
      */
-    public abstract Rectangle getClientBounds();
+    public abstract Area getClientArea();
 
     /**
      * このウィンドウのタイトルを返します。
@@ -108,6 +109,16 @@ public abstract class WindowMediator {
      * ウィンドウを削除します。 プログラム自体は終了しません。
      */
     public abstract void dispose();
+
+    /**
+     * ウィンドウの表示内容を変更します。
+     */
+    public abstract void paint();
+
+    /**
+     * 描画更新を行います。
+     */
+    public abstract void reflect();
 
     /**
      * 各環境に合わせて{@link net.inxas.rit.widget.WidgetManager}内で呼び出されます。

@@ -11,6 +11,12 @@ namespace RIT
 {
 	static constexpr LPCTSTR WindowClassName = TEXT("RIT");
 	typedef std::function<void(UINT, WPARAM, LPARAM)> MessageCallback;
+	struct RITDLL PaintBuffer
+	{
+		COLORREF* colorRef;
+		uint32_t width;
+		uint32_t len;
+	};
 
 	class RITDLL Window;
 	class RITDLL WindowManager
@@ -29,6 +35,8 @@ namespace RIT
 	{
 	private:
 		HWND hWnd;
+		PaintBuffer* paintBuf;
+		MessageCallback* callback;
 		Window(HINSTANCE hInst, MessageCallback* callback);
 		~Window();
 	public:
@@ -46,10 +54,14 @@ namespace RIT
 		void getBounds(RECT* rect);
 		void getClientBounds(RECT* rect);
 		LPTSTR getTitle();
+		size_t getTitleLen();
 		void freeTitle(LPTSTR title);
 		bool isVisible();
 
 		void nextMessage();
+
+		void transfer(COLORREF* ref, uint32_t width, uint32_t len);
+		void reflect();
 
 		void dispose();
 	};

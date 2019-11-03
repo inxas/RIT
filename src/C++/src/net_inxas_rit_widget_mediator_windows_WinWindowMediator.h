@@ -57,6 +57,46 @@ JNIEXPORT void JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMedia
 
 /*
  * Class:     net_inxas_rit_widget_mediator_windows_WinWindowMediator
+ * Method:    isAlwaysOnTop
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_isAlwaysOnTop
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_inxas_rit_widget_mediator_windows_WinWindowMediator
+ * Method:    getBounds
+ * Signature: (J)Lnet/inxas/rit/widget/geometry/Rectangle;
+ */
+JNIEXPORT jobject JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_getBounds
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_inxas_rit_widget_mediator_windows_WinWindowMediator
+ * Method:    getClientArea
+ * Signature: (J)Lnet/inxas/rit/widget/geometry/Area;
+ */
+JNIEXPORT jobject JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_getClientArea
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_inxas_rit_widget_mediator_windows_WinWindowMediator
+ * Method:    getTitle
+ * Signature: (J)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_getTitle
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_inxas_rit_widget_mediator_windows_WinWindowMediator
+ * Method:    isVisible
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_isVisible
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_inxas_rit_widget_mediator_windows_WinWindowMediator
  * Method:    toBack
  * Signature: (J)V
  */
@@ -85,6 +125,22 @@ JNIEXPORT void JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMedia
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_dispose
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_inxas_rit_widget_mediator_windows_WinWindowMediator
+ * Method:    paint
+ * Signature: (J[II)V
+ */
+JNIEXPORT void JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_paint
+  (JNIEnv *, jobject, jlong, jintArray, jint);
+
+/*
+ * Class:     net_inxas_rit_widget_mediator_windows_WinWindowMediator
+ * Method:    reflect
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_reflect
   (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus

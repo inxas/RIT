@@ -317,6 +317,57 @@ JNIEXPORT void JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMedia
 	window->setVisible(visible);
 }
 
+JNIEXPORT jboolean JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_isAlwaysOnTop
+(JNIEnv*, jobject, jlong wndPtr)
+{
+	RIT::Window* window = (RIT::Window*)wndPtr;
+	return window->isAlwaysOnTop();
+}
+
+JNIEXPORT jobject JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_getBounds
+(JNIEnv* env, jobject, jlong wndPtr)
+{
+	jclass Rectangle = env->FindClass("net/inxas/rit/widget/geometry/Rectangle");
+	static jmethodID rectInit = env->GetMethodID(Rectangle, "<init>", "(IIII)V");
+
+	RIT::Window* window = (RIT::Window*)wndPtr;
+	RECT rect;
+	window->getBounds(&rect);
+
+	return env->NewObject(Rectangle, rectInit, rect.left, rect.top, rect.right, rect.bottom);
+}
+
+JNIEXPORT jobject JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_getClientArea
+(JNIEnv* env, jobject, jlong wndPtr)
+{
+	jclass Area = env->FindClass("net/inxas/rit/widget/geometry/Area");
+	static jmethodID areaInit = env->GetMethodID(Area, "<init>", "(II)V");
+
+	RIT::Window* window = (RIT::Window*)wndPtr;
+	RECT rect;
+	window->getClientBounds(&rect);
+
+	return env->NewObject(Area, areaInit, rect.right, rect.bottom);
+}
+
+JNIEXPORT jstring JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_getTitle
+(JNIEnv* env, jobject, jlong wndPtr)
+{
+	RIT::Window* window = (RIT::Window*)wndPtr;
+	LPTSTR title = window->getTitle();
+	jstring jtitle = env->NewString((jchar*)title, window->getTitleLen());
+	window->freeTitle(title);
+	
+	return jtitle;
+}
+
+JNIEXPORT jboolean JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_isVisible
+(JNIEnv*, jobject, jlong wndPtr)
+{
+	RIT::Window* window = (RIT::Window*)wndPtr;
+	return window->isVisible();
+}
+
 JNIEXPORT void JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_toBack
 (JNIEnv*, jobject, jlong wndPtr)
 {
@@ -343,4 +394,27 @@ JNIEXPORT void JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMedia
 {
 	RIT::Window* window = (RIT::Window*)wndPtr;
 	window->dispose();
+}
+
+JNIEXPORT void JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_paint
+(JNIEnv* env, jobject, jlong wndPtr, jintArray bytes, jint width)
+{
+	RIT::Window* window = (RIT::Window*)wndPtr;
+	jsize len = env->GetArrayLength(bytes);
+	jint* colorArray = env->GetIntArrayElements(bytes, JNI_FALSE);
+
+	COLORREF* ref = new COLORREF[len];
+	for (int i = 0; i < len; i++) {
+		ref[i] = colorArray[i];
+	}
+	window->transfer(ref, width, len);
+
+	env->ReleaseIntArrayElements(bytes, colorArray, 0);
+}
+
+JNIEXPORT void JNICALL Java_net_inxas_rit_widget_mediator_windows_WinWindowMediator_reflect
+(JNIEnv*, jobject, jlong wndPtr)
+{
+	RIT::Window* window = (RIT::Window*)wndPtr;
+	window->reflect();
 }

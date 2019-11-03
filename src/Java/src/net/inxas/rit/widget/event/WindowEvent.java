@@ -23,7 +23,7 @@ public class WindowEvent extends RITEvent {
     private int id;
 
     public WindowEvent(AbstractWindow source, int id) {
-        super(source);
+        super(source, WINDOW_EVENT_MASK);
         this.id = id;
     }
 

@@ -28,6 +28,11 @@ hs_err_pid*
 # Common files
 *.txt
 *.log
+*.gitignore
+
+# Font resource
+*.ttf
+*.ttc
 
 # eclipse files
 .classpath

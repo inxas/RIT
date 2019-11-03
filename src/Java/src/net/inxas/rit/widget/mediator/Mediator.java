@@ -19,10 +19,11 @@ public final class Mediator {
      * @return                         現在の環境用の{@link WindowMediator}
      * @throws RITUnsupportedException もし現在の環境がRITをサポートしていなければスローされます。
      */
-    public static WindowMediator createWindowMediator(Window window) throws RITUnsupportedException {
+    public static WindowMediator createWindowMediator(Window window) {
+        RIT.supportCheck();
         if (RIT.isWindows()) {
             return new WinWindowMediator(window);
         }
-        throw new RITUnsupportedException();
+        return null;
     }
 }

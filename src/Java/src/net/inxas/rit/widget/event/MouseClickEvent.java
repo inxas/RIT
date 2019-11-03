@@ -47,7 +47,7 @@ public class MouseClickEvent extends RITEvent {
      * @param y          y座標
      */
     public MouseClickEvent(Widget source, int button, int mode, int virtualKey, int x, int y) {
-        super(source);
+        super(source, MOUSE_EVENT_MASK);
         this.button = button;
         this.mode = mode;
         pressLB = (virtualKey & VK_LEFT_BUTTON) != 0;

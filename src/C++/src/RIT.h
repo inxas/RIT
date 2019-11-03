@@ -8,6 +8,12 @@
 #endif
 #endif
 
+#ifdef RIT_DEBUG
+#define DEBUG_PRINT(text) std::cout << text << std::endl
+#else
+#define DEBUG_PRINT(text)
+#endif
+
 #include <Windows.h>
 #include <mutex>
 #include <cassert>

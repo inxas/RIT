@@ -3,7 +3,7 @@ package net.inxas.rit;
 /**
  * 
  * @author inxas
- * @since 2019/10/22
+ * @since  2019/10/22
  */
 public final class RIT {
     static {
@@ -23,6 +23,16 @@ public final class RIT {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 現在の実行環境がRITをサポートしているかを調べ、もしサポートしていなければ
+     * {@link RITUnsupportedException}をスローします。
+     */
+    public static void supportCheck() {
+        if (!isSupported()) {
+            throw new RITUnsupportedException();
+        }
     }
 
     /**

@@ -6,20 +6,66 @@ namespace RIT
 {
 	LRESULT WindowManager::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
-		static std::unordered_map<HWND, MessageCallback*> callbackMap;
+		static std::unordered_map<HWND, Window*> windowMap;
 		switch (msg) {
+		case WM_PAINT:
+			if(windowMap[hWnd]->paintBuf){
+				COLORREF* ref = windowMap[hWnd]->paintBuf->colorRef;
+				uint32_t width = windowMap[hWnd]->paintBuf->width;
+				uint32_t len = windowMap[hWnd]->paintBuf->len;
+
+				if (width <= 0 || len <= 0) break;
+
+				PAINTSTRUCT ps;
+				HDC hdc = BeginPaint(hWnd, &ps);
+
+				long height = len / width;
+
+				BITMAPINFO bmpInfo;
+				bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+				bmpInfo.bmiHeader.biBitCount = 32;
+				bmpInfo.bmiHeader.biPlanes = 1;
+				bmpInfo.bmiHeader.biWidth = width;
+				bmpInfo.bmiHeader.biHeight = -height;
+				bmpInfo.bmiHeader.biCompression = BI_RGB;
+
+				LPDWORD pixel;
+				HBITMAP hBmp = CreateDIBSection(hdc, &bmpInfo, DIB_RGB_COLORS, (void**)&pixel, NULL, 0);
+				if (!hBmp) {
+					EndPaint(hWnd, &ps);
+					break;
+				}
+
+				HDC buf = CreateCompatibleDC(hdc);
+				SelectObject(buf, hBmp);
+				for (int i = 0; i < len; i++) {
+					pixel[i] = ref[i];
+				}
+
+				BitBlt(hdc, 0, 0, width, height, buf, 0, 0, SRCCOPY);
+
+				DeleteDC(buf);
+				DeleteObject(hBmp);
+
+				EndPaint(hWnd, &ps);
+			}
+			break;
+		case WM_ERASEBKGND:
+			return 1;
 		case WM_CREATE:
 			{
 				CREATESTRUCT* lpcs = (CREATESTRUCT*)lParam;
-				callbackMap[hWnd] = (MessageCallback*)lpcs->lpCreateParams;
+				windowMap[hWnd] = (Window*)lpcs->lpCreateParams;
 			}
 			break;
 		case WM_DESTROY:
-			callbackMap.erase(hWnd);
+			windowMap.erase(hWnd);
 			break;
 		}
-		if (callbackMap.find(hWnd) != callbackMap.end()) {
-			(*callbackMap[hWnd])(msg, wParam, lParam);
+		if (windowMap[hWnd]) {
+			if (windowMap[hWnd]->callback) {
+				(*windowMap[hWnd]->callback)(msg, wParam, lParam);
+			}
 		}
 		if (msg == WM_CLOSE) return 0;
 		return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -63,13 +109,13 @@ namespace RIT
 		delete window;
 	}
 
-	Window::Window(HINSTANCE hInst, MessageCallback* callback)
+	Window::Window(HINSTANCE hInst, MessageCallback* callback) : callback(callback), paintBuf(nullptr)
 	{
 		hWnd = CreateWindow(
 			WindowClassName, TEXT(""), WS_OVERLAPPEDWINDOW,
 			0, 0, 0, 0,
 			NULL, NULL,
-			hInst, callback);
+			hInst, this);
 	}
 	Window::~Window()
 	{
@@ -143,6 +189,10 @@ namespace RIT
 		GetWindowText(hWnd, title, len);
 		return title;
 	}
+	size_t Window::getTitleLen()
+	{
+		return GetWindowTextLength(hWnd) + 2;
+	}
 	void Window::freeTitle(LPTSTR title)
 	{
 		delete title;
@@ -158,6 +208,15 @@ namespace RIT
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+	}
+	void Window::transfer(COLORREF* ref, uint32_t width, uint32_t len)
+	{
+		if (paintBuf) delete paintBuf;
+		paintBuf = new PaintBuffer({ ref,width,len });
+	}
+	void Window::reflect()
+	{
+		InvalidateRect(hWnd, NULL, 0);
 	}
 	void Window::dispose()
 	{

@@ -70,6 +70,7 @@ public class WidgetManager {
                 if (!taskQueue.isEmpty()) {
                     taskQueue.poll().run();
                 }
+                Thread.yield();
             }
         }
     }
